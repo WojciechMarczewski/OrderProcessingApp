@@ -7,7 +7,7 @@
         private string _zipCode;
         private string _country;
 
-        public Address(string street, string houseNumber, string city, string zipCode, string country)
+        public Address(string street, string city, string zipCode, string country)
         {
             _street = street;
             _city = city;
