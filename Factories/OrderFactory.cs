@@ -30,7 +30,7 @@ namespace OrderProcessingApp.Factories
                 orderData.AddressCountry);
             Product product = new(0, orderData.ProductName);
             Order order = new(
-                id: 0,
+                id: id,
                 product: product,
                 orderAmount: orderAmount,
                 clientType: (ClientType)orderData.ClientType,

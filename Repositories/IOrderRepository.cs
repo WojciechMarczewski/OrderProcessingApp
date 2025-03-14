@@ -4,11 +4,12 @@ namespace OrderProcessingApp.Repositories
 {
     public interface IOrderRepository
     {
-        void AddOrder(Order order);
-        void RemoveOrder(Order order);
-        void UpdateOrder(Order order);
-        Order GetOrderByID(int orderId);
-        IEnumerable<Order> GetAllOrders();
+        Task AddOrderAsync(Order order);
+        Task RemoveOrderAsync(Order order);
+        Task UpdateOrderAsync(Order order);
+        Task<Order?> GetOrderByIDAsync(int orderId);
+        Task<IEnumerable<Order>> GetAllOrdersAsync();
+
 
     }
 }

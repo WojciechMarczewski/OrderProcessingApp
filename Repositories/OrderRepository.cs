@@ -1,4 +1,5 @@
-﻿using OrderProcessingApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderProcessingApp.Data;
 using OrderProcessingApp.Models;
 
 namespace OrderProcessingApp.Repositories
@@ -12,29 +13,32 @@ namespace OrderProcessingApp.Repositories
             _appDbContext = appDbContext;
         }
 
-        public void AddOrder(Order order)
+        public async Task AddOrderAsync(Order order)
         {
-            throw new NotImplementedException();
+            await _appDbContext.Orders.AddAsync(order);
+            await _appDbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<Order> GetAllOrders()
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            throw new NotImplementedException();
+            return await _appDbContext.Orders.ToListAsync();
         }
 
-        public Order GetOrderByID(int orderId)
+        public async Task<Order?> GetOrderByIDAsync(int orderId)
         {
-            throw new NotImplementedException();
+            return await _appDbContext.Orders.FindAsync(orderId);
         }
 
-        public void RemoveOrder(Order order)
+        public async Task RemoveOrderAsync(Order order)
         {
-            throw new NotImplementedException();
+            _appDbContext.Orders.Remove(order);
+            await _appDbContext.SaveChangesAsync();
         }
 
-        public void UpdateOrder(Order order)
+        public async Task UpdateOrderAsync(Order order)
         {
-            throw new NotImplementedException();
+            _appDbContext.Orders.Update(order);
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }
