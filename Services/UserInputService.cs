@@ -28,7 +28,14 @@ namespace OrderProcessingApp.Services
         private readonly string invalidStringInputPrompt = "Nieprawidłowa wartość. Proszę podać niepusty ciąg znaków.";
 
         private readonly string orderToWarehousePrompt = "Prosze wybrać id zamówienia do przekazania do magazynu. Wpisz 'list' aby wylistować wszystkie zamówienia";
+        private readonly string orderToShippingPrompt = "Prosze wybrać id zamówienia do przekazania do wysyłki. Wpisz 'list' aby wylistować wszystkie zamówienia";
 
+        private readonly OrderService _orderService;
+
+        public UserInputService(OrderService orderService)
+        {
+            _orderService = orderService;
+        }
 
         public void PrintWelcomeMessage()
         {
@@ -119,6 +126,52 @@ namespace OrderProcessingApp.Services
                 }
             }
         }
+        private void HandleOrderSelection(string prompt, Action<int> action)
+        {
+            Console.WriteLine(prompt);
+            string? input = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                if (string.Equals(input, "list"))
+                {
+                    PrintAllOrders();
+                }
+                else if (int.TryParse(input, out int orderId))
+                {
+                    action(orderId);
+                }
+                else
+                {
+                    Console.WriteLine(invalidIntInputPrompt);
+                }
+            }
+            else
+            {
+                Console.WriteLine(invalidStringInputPrompt);
+            }
+        }
+        public void PrintAllOrders()
+        {
+            //ToDo: OrderSevice.getallorders, then loop and print all orders (Consider implementing pagination)
+        }
+        public void MoveOrderToWarehouse()
+        {
+
+            HandleOrderSelection(orderToWarehousePrompt, orderId =>
+            {
+                // ToDo: orderservice.changestatustowarehouse
+            });
+        }
+        public void MoveOrderToShipping()
+        {
+            HandleOrderSelection(orderToShippingPrompt, orderId =>
+            {
+                // ToDo: orderservice.changestatustoshipping
+            });
+        }
+
+
+
     }
 }
 
