@@ -15,7 +15,7 @@ namespace OrderProcessingApp.Factories
             return InitializeOrder(orderId, orderData, orderStatusHistory);
         }
 
-        //CreateOrder currently obsolete - there was an idea to handle the creation of orders from DB
+        //CreateOrder currently obsolete - there was an idea to handle the creation of orders from DB here
         public Order CreateOrder(int id, OrderData orderData, List<OrderStatusChange> orderHistory)
         {
             return InitializeOrder(id, orderData, orderHistory);

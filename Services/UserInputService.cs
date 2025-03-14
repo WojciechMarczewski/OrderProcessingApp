@@ -33,6 +33,12 @@ namespace OrderProcessingApp.Services
         private readonly string orderToShippingPrompt = "Prosze wybrać id zamówienia do przekazania do wysyłki. Wpisz 'list' aby wylistować wszystkie zamówienia";
 
         private readonly string noOrdersAvailablePrompt = "Nie ma odpowiednich zamówień w bazie danych.";
+
+        private readonly string orderWarehouseProcessingPrompt = "Zamówienie jest przekazywane do magazynu. Proszę czekać...";
+        private readonly string orderShipmentProcessingPrompt = "Zamówienie jest przekazywane do wysyłki. Proszę czekać...";
+
+        private readonly string orderInWarehousePrompt = "Zamówienie przekazane do magazynu.";
+        private readonly string orderInShippingPrompt = "Zamówienie zostało wysłane.";
         private readonly OrderService _orderService;
 
         public UserInputService(OrderService orderService)
@@ -194,24 +200,41 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine($"Adres zamówienia: {order.Address.Street}, {order.Address.ZipCode}, {order.Address.City}, {order.Address.Country}");
                 Console.WriteLine($"Typ klienta: {order.ClientType.ToPLString()}");
                 Console.WriteLine($"Płatność: {order.PaymentMethod.ToPLString()}");
-                Console.WriteLine($"Status zamówienia: {order.OrderStatusHistory.Last().Status}");
+                Console.WriteLine($"Status zamówienia: {order.OrderStatusHistory.Last().Status}, Ostatnia zmiana dnia: {order.OrderStatusHistory.Last().TimeStamp.DateTime}");
 
             }
         }
         public async Task MoveOrderToWarehouse()
         {
-
-            await HandleOrderSelection(orderToWarehousePrompt, async orderId =>
+            try
             {
-                await _orderService.MoveOrderToWarehouse(orderId);
-            });
+                Console.WriteLine(orderWarehouseProcessingPrompt);
+                await HandleOrderSelection(orderToWarehousePrompt, async orderId =>
+                {
+                    await _orderService.MoveOrderToWarehouse(orderId);
+                });
+                Console.WriteLine(orderInWarehousePrompt);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         public async Task MoveOrderToShipping()
         {
-            await HandleOrderSelection(orderToShippingPrompt, async orderId =>
+            try
             {
-                await _orderService.MoveOrderToShipping(orderId);
-            });
+                Console.WriteLine(orderShipmentProcessingPrompt);
+                await HandleOrderSelection(orderToShippingPrompt, async orderId =>
+                {
+                    await _orderService.MoveOrderToShipping(orderId);
+                });
+                Console.WriteLine(orderInShippingPrompt);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
 

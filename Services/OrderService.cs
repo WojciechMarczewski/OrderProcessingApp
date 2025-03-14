@@ -1,4 +1,5 @@
-﻿using OrderProcessingApp.DTOs;
+﻿using OrderProcessingApp.BusinessRules;
+using OrderProcessingApp.DTOs;
 using OrderProcessingApp.Factories;
 using OrderProcessingApp.Models;
 using OrderProcessingApp.Models.Enums;
@@ -24,17 +25,30 @@ namespace OrderProcessingApp.Services
         }
         public async Task MoveOrderToWarehouse(int orderId)
         {
-            //ToDo: logic implementation 
+            //ToDo: logic implementation
+
             await ChangeOrderStatus(orderId, (order) =>
             {
-                order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InStock, DateTimeOffset.Now));
+                var thresholdRule = new CashOnDeliveryThresholdRule();
+                if (thresholdRule.IsViolated(order))
+                {
+                    order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.Error, DateTimeOffset.Now));
+                    throw new InvalidOperationException("Zamówienia za nie mniej niż 2500 z płatnością gotówką przy odbiorze powinny" +
+                        " zostać zwrócone do klienta przy próbie przekazania do magazynu");
+                }
+                else
+                {
+                    order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InStock, DateTimeOffset.Now));
+                }
             });
         }
         public async Task MoveOrderToShipping(int orderId)
         {
             //ToDo: logic implementation 
-            await ChangeOrderStatus(orderId, (order) =>
+
+            await ChangeOrderStatus(orderId, async (order) =>
             {
+                await Task.Delay(2000);
                 order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InShipment, DateTimeOffset.Now));
             });
         }
