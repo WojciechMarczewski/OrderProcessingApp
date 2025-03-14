@@ -40,5 +40,10 @@ namespace OrderProcessingApp.Repositories
             _appDbContext.Orders.Update(order);
             await _appDbContext.SaveChangesAsync();
         }
+        public async Task<int> GetLastIdAsync()
+        {
+            var lastOrder = await _appDbContext.Orders.MaxAsync(order => (int?)order.Id) ?? 0;
+            return lastOrder;
+        }
     }
 }

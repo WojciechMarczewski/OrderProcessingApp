@@ -11,7 +11,7 @@
             _currency = currency;
         }
 
-        public decimal Value1 { get => _value; set => _value = value; }
+        public decimal Value { get => _value; set => _value = value; }
         public Currency Currency { get => _currency; set => _currency = value; }
     }
 }

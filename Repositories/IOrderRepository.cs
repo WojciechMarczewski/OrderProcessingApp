@@ -9,6 +9,7 @@ namespace OrderProcessingApp.Repositories
         Task UpdateOrderAsync(Order order);
         Task<Order?> GetOrderByIDAsync(int orderId);
         Task<IEnumerable<Order>> GetAllOrdersAsync();
+        Task<int> GetLastIdAsync();
 
 
     }

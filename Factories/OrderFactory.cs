@@ -6,15 +6,16 @@ namespace OrderProcessingApp.Factories
 {
     public class OrderFactory : IOrderFactory
     {
-        public Order CreateNewOrder(OrderData orderData)
+        public Order CreateNewOrder(int orderId, OrderData orderData)
         {
             var orderStatusHistory = new List<OrderStatusChange>()
           {
               new OrderStatusChange(OrderStatus.New, DateTimeOffset.Now)
           };
-            return InitializeOrder(0, orderData, orderStatusHistory);
+            return InitializeOrder(orderId, orderData, orderStatusHistory);
         }
 
+        //CreateOrder currently obsolete - there was an idea to handle the creation of orders from DB
         public Order CreateOrder(int id, OrderData orderData, List<OrderStatusChange> orderHistory)
         {
             return InitializeOrder(id, orderData, orderHistory);

@@ -29,6 +29,10 @@ namespace OrderProcessingApp.Models
         public Address Address { get => _address; set => _address = value; }
         public PaymentMethod PaymentMethod { get => _paymentMethod; set => _paymentMethod = value; }
         public List<OrderStatusChange> OrderStatusHistory { get => _orderStatusHistory; set => _orderStatusHistory = value; }
+        public OrderStatus GetOrderStatus()
+        {
+            return OrderStatusHistory.Last().Status;
+        }
 
     }
 }
