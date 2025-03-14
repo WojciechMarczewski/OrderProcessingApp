@@ -51,5 +51,19 @@ namespace OrderProcessingApp.Services
             }
             await _orderRepository.UpdateOrderAsync(order);
         }
+
+        public async Task<List<Order>> GetAllOrdersAsync()
+        {
+            return (List<Order>)await _orderRepository.GetAllOrdersAsync();
+        }
+        public async Task<List<Order>> GetAllNewOrders()
+        {
+            return (List<Order>)await _orderRepository.GetAllNewOrders();
+        }
+        public async Task<List<Order>> GetAllOrdersInStock()
+        {
+            return (List<Order>)await _orderRepository.GetAllInStockOrders();
+        }
+
     }
 }

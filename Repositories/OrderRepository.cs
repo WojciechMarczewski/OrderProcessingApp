@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderProcessingApp.Data;
 using OrderProcessingApp.Models;
+using OrderProcessingApp.Models.Enums;
 
 namespace OrderProcessingApp.Repositories
 {
@@ -44,6 +45,14 @@ namespace OrderProcessingApp.Repositories
         {
             var lastOrder = await _appDbContext.Orders.MaxAsync(order => (int?)order.Id) ?? 0;
             return lastOrder;
+        }
+        public async Task<IEnumerable<Order>> GetAllNewOrders()
+        {
+            return await _appDbContext.Orders.Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.New)).ToListAsync();
+        }
+        public async Task<IEnumerable<Order>> GetAllInStockOrders()
+        {
+            return await _appDbContext.Orders.Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.InStock)).ToListAsync();
         }
     }
 }

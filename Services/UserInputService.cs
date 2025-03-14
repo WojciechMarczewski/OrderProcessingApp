@@ -1,4 +1,6 @@
 ﻿using OrderProcessingApp.DTOs;
+using OrderProcessingApp.Extensions;
+using OrderProcessingApp.Models;
 
 namespace OrderProcessingApp.Services
 {
@@ -30,6 +32,7 @@ namespace OrderProcessingApp.Services
         private readonly string orderToWarehousePrompt = "Prosze wybrać id zamówienia do przekazania do magazynu. Wpisz 'list' aby wylistować wszystkie zamówienia";
         private readonly string orderToShippingPrompt = "Prosze wybrać id zamówienia do przekazania do wysyłki. Wpisz 'list' aby wylistować wszystkie zamówienia";
 
+        private readonly string noOrdersAvailablePrompt = "Nie ma odpowiednich zamówień w bazie danych.";
         private readonly OrderService _orderService;
 
         public UserInputService(OrderService orderService)
@@ -126,19 +129,47 @@ namespace OrderProcessingApp.Services
                 }
             }
         }
-        private void HandleOrderSelection(string prompt, Action<int> action)
+        private async Task HandleOrderSelection(string prompt, Func<int, Task> action)
         {
             Console.WriteLine(prompt);
             string? input = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(input))
             {
-                if (string.Equals(input, "list"))
+                if (IsListCommand(input))
                 {
-                    PrintAllOrders();
+                    if (ReferenceEquals(prompt, orderToWarehousePrompt))
+                    {
+                        var ordersList = await _orderService.GetAllNewOrders();
+                        if (ordersList.Count > 0)
+                        {
+                            PrintOrders(ordersList);
+                            Console.WriteLine(prompt);
+                            input = Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine(noOrdersAvailablePrompt);
+                        }
+                    }
+                    if (ReferenceEquals(prompt, orderToShippingPrompt))
+                    {
+                        var ordersList = await _orderService.GetAllOrdersInStock();
+                        if (ordersList.Count > 0)
+                        {
+                            PrintOrders(ordersList);
+                            Console.WriteLine(prompt);
+                            input = Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine(noOrdersAvailablePrompt);
+                        }
+                    }
+
                 }
                 else if (int.TryParse(input, out int orderId))
                 {
-                    action(orderId);
+                    await action(orderId);
                 }
                 else
                 {
@@ -150,23 +181,36 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine(invalidStringInputPrompt);
             }
         }
-        public void PrintAllOrders()
+        private bool IsListCommand(string input)
         {
-            //ToDo: OrderSevice.getallorders, then loop and print all orders (Consider implementing pagination)
+            return string.Equals(input, "list", StringComparison.OrdinalIgnoreCase);
         }
-        public void MoveOrderToWarehouse()
+        public void PrintOrders(List<Order> orderList)
+        {
+            foreach (var order in orderList)
+            {
+                Console.WriteLine($"ID: {order.Id} Nazwa produktu: {order.Product.ProductName}");
+                Console.WriteLine($"Kwota zamówienia: {order.OrderAmount.Value} {order.OrderAmount.Currency.Symbol}");
+                Console.WriteLine($"Adres zamówienia: {order.Address.Street}, {order.Address.ZipCode}, {order.Address.City}, {order.Address.Country}");
+                Console.WriteLine($"Typ klienta: {order.ClientType.ToPLString()}");
+                Console.WriteLine($"Płatność: {order.PaymentMethod.ToPLString()}");
+                Console.WriteLine($"Status zamówienia: {order.OrderStatusHistory.Last().Status}");
+
+            }
+        }
+        public async Task MoveOrderToWarehouse()
         {
 
-            HandleOrderSelection(orderToWarehousePrompt, orderId =>
+            await HandleOrderSelection(orderToWarehousePrompt, async orderId =>
             {
-                // ToDo: orderservice.changestatustowarehouse
+                await _orderService.MoveOrderToWarehouse(orderId);
             });
         }
-        public void MoveOrderToShipping()
+        public async Task MoveOrderToShipping()
         {
-            HandleOrderSelection(orderToShippingPrompt, orderId =>
+            await HandleOrderSelection(orderToShippingPrompt, async orderId =>
             {
-                // ToDo: orderservice.changestatustoshipping
+                await _orderService.MoveOrderToShipping(orderId);
             });
         }
 
