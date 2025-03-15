@@ -2,12 +2,10 @@
 {
     public class Product
     {
-        public int Id { get; }
         private string _productName;
 
-        public Product(int id, string productName)
+        public Product(string productName)
         {
-            Id = id;
             _productName = productName;
         }
 

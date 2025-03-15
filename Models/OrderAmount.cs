@@ -5,6 +5,7 @@
         private decimal _value;
         private Currency _currency;
 
+        private OrderAmount() { }
         public OrderAmount(decimal value, Currency currency)
         {
             _value = value;

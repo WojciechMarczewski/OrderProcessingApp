@@ -9,17 +9,18 @@ namespace OrderProcessingApp
 {
     internal class Program
     {
-        static async void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var serviceProvider = new ServiceCollection().
                 AddDbContext<AppDbContext>(options =>
-                    options.UseSqlServer("connection_string_placeholder")).
+                    options.UseInMemoryDatabase("TestDb")).
                 AddScoped<IOrderRepository, OrderRepository>().
                 AddScoped<IOrderFactory, OrderFactory>().
                 AddScoped<OrderService>().
                 AddScoped<UserInputService>().
                 BuildServiceProvider();
 
+            SeedDatabase(serviceProvider);
             var userInputService = serviceProvider.GetService<UserInputService>();
             if (userInputService is not null)
             {
@@ -58,6 +59,20 @@ namespace OrderProcessingApp
             }
 
 
+        }
+        private static void SeedDatabase(ServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var orderFactory = scope.ServiceProvider.GetRequiredService<IOrderFactory>();
+                if (!context.Orders.Any())
+                {
+                    var sampleOrders = orderFactory.GenerateSeedData();
+                    context.Orders.AddRange(sampleOrders);
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

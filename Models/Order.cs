@@ -4,7 +4,7 @@ namespace OrderProcessingApp.Models
 {
     public class Order
     {
-        public int Id { get; }
+        public int Id { get; set; }
         private Product _product;
         private OrderAmount _orderAmount;
         private ClientType _clientType;
@@ -12,7 +12,7 @@ namespace OrderProcessingApp.Models
         private PaymentMethod _paymentMethod;
         private List<OrderStatusChange> _orderStatusHistory;
 
-
+        private Order() { }
         public Order(int id, Product product, OrderAmount orderAmount, ClientType clientType, Address address, PaymentMethod paymentMethod, List<OrderStatusChange> orderStatusHistory)
         {
             Id = id;

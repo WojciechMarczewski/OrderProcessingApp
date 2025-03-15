@@ -7,5 +7,6 @@ namespace OrderProcessingApp.Factories
     {
         Order CreateOrder(int id, OrderData orderData, List<OrderStatusChange> orderHistory);
         Order CreateNewOrder(int id, OrderData orderData);
+        List<Order> GenerateSeedData();
     }
 }

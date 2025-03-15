@@ -15,7 +15,6 @@ namespace OrderProcessingApp.Factories
             return InitializeOrder(orderId, orderData, orderStatusHistory);
         }
 
-        //CreateOrder currently obsolete - there was an idea to handle the creation of orders from DB here
         public Order CreateOrder(int id, OrderData orderData, List<OrderStatusChange> orderHistory)
         {
             return InitializeOrder(id, orderData, orderHistory);
@@ -29,7 +28,7 @@ namespace OrderProcessingApp.Factories
                 orderData.AddressCity,
                 orderData.AddressZipCode,
                 orderData.AddressCountry);
-            Product product = new(0, orderData.ProductName);
+            Product product = new(orderData.ProductName);
             Order order = new(
                 id: id,
                 product: product,
@@ -40,5 +39,32 @@ namespace OrderProcessingApp.Factories
                 orderStatusHistory: orderHistory);
             return order;
         }
+        public List<Order> GenerateSeedData()
+        {
+            List<Order> orderSeedList = new();
+            Random rand = new Random();
+            for (int i = 1; i < 7; i++)
+            {
+                OrderData sampleOrderData = new(
+                    productName: $"Produkt {i}",
+                    amount: (decimal)rand.NextDouble() * 5000,
+                    currency_Code: "PLN",
+                    currency_Symbol: "zł",
+                    clientType: rand.Next(2),
+                    addressStreet: new[] { $"ul. Przykładowa {i * rand.Next(10)}", $"ul. Testowa {i * rand.Next(12)}", $"ul. Zmyślona {i * rand.Next(7)}" }[rand.Next(3)],
+                    addressCity: new[] { "Testowo", "Fikcyjna Góra", "Debugowo" }[rand.Next(3)],
+                    addressZipCode: new[] { "33-900", "22-400", "44-200" }[rand.Next(3)],
+                    addressCountry: "Polska",
+                    paymentMethod: rand.Next(2)
+                    );
+                List<OrderStatusChange> sampleOrderHistory = new(){
+                     new OrderStatusChange((OrderStatus)i-1, DateTimeOffset.Now) };
+                orderSeedList.Add(CreateOrder(i, sampleOrderData, sampleOrderHistory));
+
+            }
+            return orderSeedList;
+
+        }
+
     }
 }
