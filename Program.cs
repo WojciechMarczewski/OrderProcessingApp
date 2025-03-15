@@ -9,7 +9,7 @@ namespace OrderProcessingApp
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async void Main(string[] args)
         {
             var serviceProvider = new ServiceCollection().
                 AddDbContext<AppDbContext>(options =>
@@ -27,7 +27,29 @@ namespace OrderProcessingApp
                 while (true)
                 {
                     userInputService.PrintMenu();
-                    //To do: program workflow
+                    var command = userInputService.UserInputCommand();
+                    switch (command)
+                    {
+                        case 1:
+                            await userInputService.CreateNewOrderAsync();
+                            break;
+                        case 2:
+                            await userInputService.MoveOrderToWarehouse();
+                            break;
+                        case 3:
+                            await userInputService.MoveOrderToShipping();
+                            break;
+                        case 4:
+                            await userInputService.PrintAllOrders();
+                            break;
+                        case 5:
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            userInputService.PrintUnknownCommand();
+                            break;
+
+                    }
                 }
             }
             else

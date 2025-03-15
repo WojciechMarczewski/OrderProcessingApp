@@ -25,6 +25,8 @@ namespace OrderProcessingApp.Services
         private readonly string addressCountryPrompt = "Podaj kraj";
         private readonly string paymentMethodPrompt = "Podaj metodę płatności (0 dla karty, 1 dla płatności przy odbiorze)";
 
+        private readonly string newOrderCreationDonePrompt = "Zakończono tworzenie nowego zamówienia.";
+
         private readonly string invalidDecimalInputPrompt = "Nieprawidłowa wartość. Proszę podać poprawną liczbę dziesiętną.";
         private readonly string invalidIntInputPrompt = "Nieprawidłowa wartość. Proszę podać poprawną liczbę całkowitą.";
         private readonly string invalidStringInputPrompt = "Nieprawidłowa wartość. Proszę podać niepusty ciąg znaków.";
@@ -39,6 +41,9 @@ namespace OrderProcessingApp.Services
 
         private readonly string orderInWarehousePrompt = "Zamówienie przekazane do magazynu.";
         private readonly string orderInShippingPrompt = "Zamówienie zostało wysłane.";
+
+        private readonly string unknownCommandPrompt = "Nieznana komenda. Spróbuj jeszcze raz.";
+
         private readonly OrderService _orderService;
 
         public UserInputService(OrderService orderService)
@@ -59,7 +64,11 @@ namespace OrderProcessingApp.Services
                 menuOptionFour + Environment.NewLine +
                 menuOptionExit + Environment.NewLine);
         }
-        public OrderData GetOrderDataFromUser()
+        public void PrintUnknownCommand()
+        {
+            Console.WriteLine(unknownCommandPrompt);
+        }
+        private OrderData GetOrderDataFromUser()
         {
             string productName = GetStringInput(productNamePrompt);
             decimal amount = GetDecimalInput(amountPrompt);
@@ -86,7 +95,12 @@ namespace OrderProcessingApp.Services
                 );
 
         }
-
+        public async Task CreateNewOrderAsync()
+        {
+            var orderData = GetOrderDataFromUser();
+            await _orderService.CreateNewOrder(orderData);
+            Console.WriteLine(newOrderCreationDonePrompt);
+        }
         private string GetStringInput(string prompt)
         {
             while (true)
@@ -191,7 +205,7 @@ namespace OrderProcessingApp.Services
         {
             return string.Equals(input, "list", StringComparison.OrdinalIgnoreCase);
         }
-        public void PrintOrders(List<Order> orderList)
+        private void PrintOrders(List<Order> orderList)
         {
             foreach (var order in orderList)
             {
@@ -203,6 +217,11 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine($"Status zamówienia: {order.OrderStatusHistory.Last().Status}, Ostatnia zmiana dnia: {order.OrderStatusHistory.Last().TimeStamp.DateTime}");
 
             }
+        }
+        public async Task PrintAllOrders()
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            PrintOrders(orders);
         }
         public async Task MoveOrderToWarehouse()
         {
@@ -236,7 +255,10 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine(ex.Message);
             }
         }
-
+        public int UserInputCommand()
+        {
+            return GetIntInput("");
+        }
 
 
     }
