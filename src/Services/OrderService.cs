@@ -20,6 +20,13 @@ namespace OrderProcessingApp.Services
         public async Task CreateNewOrder(OrderData orderData)
         {
             var order = _orderFactory.CreateNewOrder(orderData);
+            var addressRequiredRule = new ShippingAddressRequiredRule();
+            if (addressRequiredRule.IsViolated(order))
+            {
+                order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.Error, DateTimeOffset.Now));
+                await _orderRepository.AddOrderAsync(order);
+                throw new InvalidOperationException(addressRequiredRule.Explain());
+            }
             await _orderRepository.AddOrderAsync(order);
         }
         public async Task MoveOrderToWarehouse(int orderId)

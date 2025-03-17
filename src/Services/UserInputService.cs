@@ -98,7 +98,14 @@ namespace OrderProcessingApp.Services
         public async Task CreateNewOrderAsync()
         {
             var orderData = GetOrderDataFromUser();
-            await _orderService.CreateNewOrder(orderData);
+            try
+            {
+                await _orderService.CreateNewOrder(orderData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Błąd: " + ex.Message);
+            }
             Console.WriteLine(newOrderCreationDonePrompt);
         }
         private string GetStringInput(string prompt)
