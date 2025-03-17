@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessingApp", "OrderProcessingApp.csproj", "{AC0E280B-E7A6-47C4-8A3F-D38255E54254}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessingApp", "src\OrderProcessingApp.csproj", "{3937FB3A-2D22-32D3-11D1-DC4B64F97872}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AC0E280B-E7A6-47C4-8A3F-D38255E54254}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC0E280B-E7A6-47C4-8A3F-D38255E54254}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC0E280B-E7A6-47C4-8A3F-D38255E54254}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC0E280B-E7A6-47C4-8A3F-D38255E54254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3937FB3A-2D22-32D3-11D1-DC4B64F97872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3937FB3A-2D22-32D3-11D1-DC4B64F97872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3937FB3A-2D22-32D3-11D1-DC4B64F97872}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3937FB3A-2D22-32D3-11D1-DC4B64F97872}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB1AC3FD-B6F8-40B4-BD72-6655359F2BBC}
 	EndGlobalSection
 EndGlobal
