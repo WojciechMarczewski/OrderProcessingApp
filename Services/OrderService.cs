@@ -19,8 +19,7 @@ namespace OrderProcessingApp.Services
         }
         public async Task CreateNewOrder(OrderData orderData)
         {
-            var orderId = await _orderRepository.GetLastIdAsync();
-            var order = _orderFactory.CreateNewOrder(orderId, orderData);
+            var order = _orderFactory.CreateNewOrder(orderData);
             await _orderRepository.AddOrderAsync(order);
         }
         public async Task MoveOrderToWarehouse(int orderId)
@@ -30,11 +29,15 @@ namespace OrderProcessingApp.Services
             await ChangeOrderStatus(orderId, (order) =>
             {
                 var thresholdRule = new CashOnDeliveryThresholdRule();
+                var orderCanChangeStatusRule = new OrderCanChangeStatusRule();
                 if (thresholdRule.IsViolated(order))
                 {
                     order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.Error, DateTimeOffset.Now));
-                    throw new InvalidOperationException("Zamówienia za nie mniej niż 2500 z płatnością gotówką przy odbiorze powinny" +
-                        " zostać zwrócone do klienta przy próbie przekazania do magazynu");
+                    throw new InvalidOperationException(thresholdRule.Explain());
+                }
+                else if (orderCanChangeStatusRule.IsViolated(order))
+                {
+                    throw new InvalidOperationException(orderCanChangeStatusRule.Explain());
                 }
                 else
                 {
@@ -48,8 +51,16 @@ namespace OrderProcessingApp.Services
 
             await ChangeOrderStatus(orderId, async (order) =>
             {
-                await Task.Delay(2000);
-                order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InShipment, DateTimeOffset.Now));
+                var orderCanChangeStatusRule = new OrderCanChangeStatusRule();
+                if (orderCanChangeStatusRule.IsViolated(order))
+                {
+                    throw new InvalidOperationException(orderCanChangeStatusRule.Explain());
+                }
+                else
+                {
+                    await Task.Delay(2000);
+                    order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InShipment, DateTimeOffset.Now));
+                }
             });
         }
         private async Task ChangeOrderStatus(int orderId, Action<Order> action)

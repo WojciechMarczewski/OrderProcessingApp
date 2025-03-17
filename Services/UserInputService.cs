@@ -7,7 +7,7 @@ namespace OrderProcessingApp.Services
     public class UserInputService
     {
         private readonly string welcomeMessage = "Witaj w aplikacji do zarządzania zamówieniami";
-        private readonly string menuOptionsPrompt = "Wybierz opcję:";
+        private readonly string menuOptionsPrompt = "\nWybierz opcję:";
         private readonly string menuOptionOne = "1. Utwórz nowe zamówienie";
         private readonly string menuOptionTwo = "2. Przekaż zamówienie do magazynu";
         private readonly string menuOptionThree = "3. Przekaż zamówienie do wysyłki";
@@ -209,12 +209,13 @@ namespace OrderProcessingApp.Services
         {
             foreach (var order in orderList)
             {
-                Console.WriteLine($"ID: {order.Id} Nazwa produktu: {order.Product.ProductName}");
+                Console.WriteLine($"\nID: {order.Id} Nazwa produktu: {order.Product.ProductName}");
                 Console.WriteLine($"Kwota zamówienia: {order.OrderAmount.Value} {order.OrderAmount.Currency.Symbol}");
                 Console.WriteLine($"Adres zamówienia: {order.Address.Street}, {order.Address.ZipCode}, {order.Address.City}, {order.Address.Country}");
                 Console.WriteLine($"Typ klienta: {order.ClientType.ToPLString()}");
                 Console.WriteLine($"Płatność: {order.PaymentMethod.ToPLString()}");
-                Console.WriteLine($"Status zamówienia: {order.OrderStatusHistory.Last().Status}, Ostatnia zmiana dnia: {order.OrderStatusHistory.Last().TimeStamp.DateTime}");
+                Console.WriteLine($"Status zamówienia: {order.OrderStatusHistory.Last().Status.ToPLString()}, Ostatnia zmiana dnia: {order.OrderStatusHistory.Last().TimeStamp.DateTime} \n");
+                Console.WriteLine("====================================================================================");
 
             }
         }
@@ -227,12 +228,12 @@ namespace OrderProcessingApp.Services
         {
             try
             {
-                Console.WriteLine(orderWarehouseProcessingPrompt);
+                //Console.WriteLine(orderInWarehousePrompt);
                 await HandleOrderSelection(orderToWarehousePrompt, async orderId =>
                 {
                     await _orderService.MoveOrderToWarehouse(orderId);
                 });
-                Console.WriteLine(orderInWarehousePrompt);
+                Console.WriteLine(orderWarehouseProcessingPrompt);
             }
             catch (Exception ex)
             {
@@ -243,12 +244,12 @@ namespace OrderProcessingApp.Services
         {
             try
             {
-                Console.WriteLine(orderShipmentProcessingPrompt);
+                //Console.WriteLine(orderInShippingPrompt);
                 await HandleOrderSelection(orderToShippingPrompt, async orderId =>
                 {
                     await _orderService.MoveOrderToShipping(orderId);
                 });
-                Console.WriteLine(orderInShippingPrompt);
+                Console.WriteLine(orderShipmentProcessingPrompt);
             }
             catch (Exception ex)
             {

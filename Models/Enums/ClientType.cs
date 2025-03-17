@@ -3,6 +3,7 @@
     public enum ClientType
     {
         Company,
-        Person
+        Person,
+        Unknown
     }
 }

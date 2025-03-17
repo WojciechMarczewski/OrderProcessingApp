@@ -12,10 +12,12 @@ namespace OrderProcessingApp.Models
         private PaymentMethod _paymentMethod;
         private List<OrderStatusChange> _orderStatusHistory;
 
+        [Obsolete("Only needed for EF serialization", true)]
+#pragma warning disable CS8618 // Pole niedopuszczające wartości null musi zawierać wartość inną niż null podczas kończenia działania konstruktora. Rozważ dodanie modyfikatora „required” lub zadeklarowanie go jako dopuszczającego wartość null.
         private Order() { }
-        public Order(int id, Product product, OrderAmount orderAmount, ClientType clientType, Address address, PaymentMethod paymentMethod, List<OrderStatusChange> orderStatusHistory)
+#pragma warning restore CS8618 // Pole niedopuszczające wartości null musi zawierać wartość inną niż null podczas kończenia działania konstruktora. Rozważ dodanie modyfikatora „required” lub zadeklarowanie go jako dopuszczającego wartość null.
+        public Order(Product product, OrderAmount orderAmount, ClientType clientType, Address address, PaymentMethod paymentMethod, List<OrderStatusChange> orderStatusHistory)
         {
-            Id = id;
             _product = product;
             _orderAmount = orderAmount;
             _clientType = clientType;

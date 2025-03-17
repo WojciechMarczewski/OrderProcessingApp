@@ -5,6 +5,7 @@ namespace OrderProcessingApp.BusinessRules
     public class ShippingAddressRequiredRule : IOrderBusinessRule
     {
 
+
         public bool IsViolated(Order order)
         {
             return IsAddressIncomplete(order);
@@ -15,6 +16,10 @@ namespace OrderProcessingApp.BusinessRules
                 || string.IsNullOrWhiteSpace(order.Address.City)
                 || string.IsNullOrWhiteSpace(order.Address.ZipCode)
                 || string.IsNullOrWhiteSpace(order.Address.Country);
+        }
+        public string Explain()
+        {
+            return "\nAdres jest niekompletny.";
         }
     }
 }

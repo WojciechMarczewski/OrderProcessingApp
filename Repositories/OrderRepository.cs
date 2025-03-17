@@ -22,12 +22,12 @@ namespace OrderProcessingApp.Repositories
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            return await _appDbContext.Orders.ToListAsync();
+            return await _appDbContext.Orders.Include(o => o.OrderStatusHistory).ToListAsync();
         }
 
         public async Task<Order?> GetOrderByIDAsync(int orderId)
         {
-            return await _appDbContext.Orders.FindAsync(orderId);
+            return await _appDbContext.Orders.Include(o => o.OrderStatusHistory).FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public async Task RemoveOrderAsync(Order order)

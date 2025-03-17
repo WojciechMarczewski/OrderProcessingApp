@@ -6,20 +6,20 @@ namespace OrderProcessingApp.Factories
 {
     public class OrderFactory : IOrderFactory
     {
-        public Order CreateNewOrder(int orderId, OrderData orderData)
+        public Order CreateNewOrder(OrderData orderData)
         {
             var orderStatusHistory = new List<OrderStatusChange>()
           {
               new OrderStatusChange(OrderStatus.New, DateTimeOffset.Now)
           };
-            return InitializeOrder(orderId, orderData, orderStatusHistory);
+            return InitializeOrder(orderData, orderStatusHistory);
         }
 
-        public Order CreateOrder(int id, OrderData orderData, List<OrderStatusChange> orderHistory)
+        public Order CreateOrder(OrderData orderData, List<OrderStatusChange> orderHistory)
         {
-            return InitializeOrder(id, orderData, orderHistory);
+            return InitializeOrder(orderData, orderHistory);
         }
-        public Order InitializeOrder(int id, OrderData orderData, List<OrderStatusChange> orderHistory)
+        public Order InitializeOrder(OrderData orderData, List<OrderStatusChange> orderHistory)
         {
             Currency currency = new(orderData.Currency_Code, orderData.Currency_Symbol);
             OrderAmount orderAmount = new(orderData.Amount, currency);
@@ -30,7 +30,6 @@ namespace OrderProcessingApp.Factories
                 orderData.AddressCountry);
             Product product = new(orderData.ProductName);
             Order order = new(
-                id: id,
                 product: product,
                 orderAmount: orderAmount,
                 clientType: (ClientType)orderData.ClientType,
@@ -47,7 +46,7 @@ namespace OrderProcessingApp.Factories
             {
                 OrderData sampleOrderData = new(
                     productName: $"Produkt {i}",
-                    amount: (decimal)rand.NextDouble() * 5000,
+                    amount: Math.Round((decimal)rand.NextDouble() * 5000, 2),
                     currency_Code: "PLN",
                     currency_Symbol: "zł",
                     clientType: rand.Next(2),
@@ -59,7 +58,7 @@ namespace OrderProcessingApp.Factories
                     );
                 List<OrderStatusChange> sampleOrderHistory = new(){
                      new OrderStatusChange((OrderStatus)i-1, DateTimeOffset.Now) };
-                orderSeedList.Add(CreateOrder(i, sampleOrderData, sampleOrderHistory));
+                orderSeedList.Add(CreateOrder(sampleOrderData, sampleOrderHistory));
 
             }
             return orderSeedList;

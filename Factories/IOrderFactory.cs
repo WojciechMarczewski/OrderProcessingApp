@@ -5,8 +5,8 @@ namespace OrderProcessingApp.Factories
 {
     public interface IOrderFactory
     {
-        Order CreateOrder(int id, OrderData orderData, List<OrderStatusChange> orderHistory);
-        Order CreateNewOrder(int id, OrderData orderData);
+        Order CreateOrder(OrderData orderData, List<OrderStatusChange> orderHistory);
+        Order CreateNewOrder(OrderData orderData);
         List<Order> GenerateSeedData();
     }
 }

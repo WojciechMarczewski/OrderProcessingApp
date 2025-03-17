@@ -7,6 +7,7 @@
         InShipment,
         ReturnedToClient,
         Error,
-        Closed
+        Closed,
+        Unknown
     }
 }
