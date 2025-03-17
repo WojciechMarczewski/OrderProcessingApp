@@ -75,10 +75,10 @@ namespace OrderProcessingApp.Services
             string currencyCode = GetStringInput(currencyCodePrompt);
             string currencySymbol = GetStringInput(currencySymbolPrompt);
             int clientType = GetIntInput(clientTypePrompt);
-            string addressStreet = GetStringInput(addressStreetPrompt);
-            string addressCity = GetStringInput(addressCityPrompt);
-            string addressZipCode = GetStringInput(addressZipCodePrompt);
-            string addressCountry = GetStringInput(addressCountryPrompt);
+            string? addressStreet = GetStringInputNoNullCheck(addressStreetPrompt);
+            string? addressCity = GetStringInputNoNullCheck(addressCityPrompt);
+            string? addressZipCode = GetStringInputNoNullCheck(addressZipCodePrompt);
+            string? addressCountry = GetStringInputNoNullCheck(addressCountryPrompt);
             int paymentMethod = GetIntInput(paymentMethodPrompt);
 
             return new OrderData(
@@ -87,10 +87,10 @@ namespace OrderProcessingApp.Services
                 currency_Code: currencyCode,
                 currency_Symbol: currencySymbol,
                 clientType: clientType,
-                addressStreet: addressStreet,
-                addressCity: addressCity,
-                addressZipCode: addressZipCode,
-                addressCountry: addressCountry,
+                addressStreet: addressStreet!,
+                addressCity: addressCity!,
+                addressZipCode: addressZipCode!,
+                addressCountry: addressCountry!,
                 paymentMethod: paymentMethod
                 );
 
@@ -123,6 +123,14 @@ namespace OrderProcessingApp.Services
                     Console.WriteLine(invalidStringInputPrompt);
                 }
             }
+        }
+        private string? GetStringInputNoNullCheck(string prompt)
+        {
+
+            Console.WriteLine(prompt);
+            string? input = Console.ReadLine();
+
+            return input;
         }
         private decimal GetDecimalInput(string prompt)
         {

@@ -7,10 +7,10 @@
         public string Currency_Code { get; }
         public string Currency_Symbol { get; }
         public int ClientType { get; }
-        public string AddressStreet { get; }
-        public string AddressCity { get; }
-        public string AddressZipCode { get; }
-        public string AddressCountry { get; }
+        public string? AddressStreet { get; }
+        public string? AddressCity { get; }
+        public string? AddressZipCode { get; }
+        public string? AddressCountry { get; }
         public int PaymentMethod { get; }
 
         public OrderData(string productName,
