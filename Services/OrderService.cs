@@ -24,20 +24,18 @@ namespace OrderProcessingApp.Services
         }
         public async Task MoveOrderToWarehouse(int orderId)
         {
-            //ToDo: logic implementation
-
             await ChangeOrderStatus(orderId, (order) =>
             {
+                var orderCanChangeStatusRule = new OrderCanChangeStatusRule(OrderStatus.InStock);
                 var thresholdRule = new CashOnDeliveryThresholdRule();
-                var orderCanChangeStatusRule = new OrderCanChangeStatusRule();
+                if (orderCanChangeStatusRule.IsViolated(order))
+                {
+                    throw new InvalidOperationException(orderCanChangeStatusRule.Explain());
+                }
                 if (thresholdRule.IsViolated(order))
                 {
                     order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.Error, DateTimeOffset.Now));
                     throw new InvalidOperationException(thresholdRule.Explain());
-                }
-                else if (orderCanChangeStatusRule.IsViolated(order))
-                {
-                    throw new InvalidOperationException(orderCanChangeStatusRule.Explain());
                 }
                 else
                 {
@@ -47,21 +45,20 @@ namespace OrderProcessingApp.Services
         }
         public async Task MoveOrderToShipping(int orderId)
         {
-            //ToDo: logic implementation 
-
-            await ChangeOrderStatus(orderId, async (order) =>
+            await ChangeOrderStatus(orderId, (order) =>
             {
-                var orderCanChangeStatusRule = new OrderCanChangeStatusRule();
+                var orderCanChangeStatusRule = new OrderCanChangeStatusRule(OrderStatus.InShipment);
                 if (orderCanChangeStatusRule.IsViolated(order))
                 {
                     throw new InvalidOperationException(orderCanChangeStatusRule.Explain());
                 }
                 else
                 {
-                    await Task.Delay(2000);
+
                     order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InShipment, DateTimeOffset.Now));
                 }
             });
+            await Task.Delay(2000);
         }
         private async Task ChangeOrderStatus(int orderId, Action<Order> action)
         {

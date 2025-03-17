@@ -187,7 +187,7 @@ namespace OrderProcessingApp.Services
                     }
 
                 }
-                else if (int.TryParse(input, out int orderId))
+                if (int.TryParse(input, out int orderId))
                 {
                     await action(orderId);
                 }
@@ -228,32 +228,36 @@ namespace OrderProcessingApp.Services
         {
             try
             {
-                //Console.WriteLine(orderInWarehousePrompt);
+
                 await HandleOrderSelection(orderToWarehousePrompt, async orderId =>
                 {
+                    Console.WriteLine(orderWarehouseProcessingPrompt);
                     await _orderService.MoveOrderToWarehouse(orderId);
+                    Console.WriteLine(orderInWarehousePrompt);
                 });
-                Console.WriteLine(orderWarehouseProcessingPrompt);
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Błąd: " + ex.Message);
             }
         }
         public async Task MoveOrderToShipping()
         {
             try
             {
-                //Console.WriteLine(orderInShippingPrompt);
+
                 await HandleOrderSelection(orderToShippingPrompt, async orderId =>
                 {
+                    Console.WriteLine(orderShipmentProcessingPrompt);
                     await _orderService.MoveOrderToShipping(orderId);
+                    Console.WriteLine(orderInShippingPrompt);
                 });
-                Console.WriteLine(orderShipmentProcessingPrompt);
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Błąd: " + ex.Message);
             }
         }
         public int UserInputCommand()

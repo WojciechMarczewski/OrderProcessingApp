@@ -48,11 +48,17 @@ namespace OrderProcessingApp.Repositories
         }
         public async Task<IEnumerable<Order>> GetAllNewOrders()
         {
-            return await _appDbContext.Orders.Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.New)).ToListAsync();
+            return await _appDbContext.Orders.
+                Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.New)).
+                Include(o => o.OrderStatusHistory).
+                ToListAsync();
         }
         public async Task<IEnumerable<Order>> GetAllInStockOrders()
         {
-            return await _appDbContext.Orders.Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.InStock)).ToListAsync();
+            return await _appDbContext.Orders.
+                Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.InStock)).
+                Include(o => o.OrderStatusHistory).
+                ToListAsync();
         }
     }
 }

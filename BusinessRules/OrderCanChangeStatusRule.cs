@@ -7,21 +7,31 @@ namespace OrderProcessingApp.BusinessRules
     public class OrderCanChangeStatusRule : IOrderBusinessRule
     {
         private OrderStatus _orderStatus = OrderStatus.Unknown;
+        private OrderStatus _orderStatusChangedTo;
         private int? _orderId;
 
+        public OrderCanChangeStatusRule(OrderStatus orderStatusChangedTo)
+        {
+            _orderStatusChangedTo = orderStatusChangedTo;
+        }
         public bool IsViolated(Order order)
         {
             _orderStatus = order.GetOrderStatus();
             _orderId = order.Id;
-            return !FromInStockToInShipping(_orderStatus) || !FromNewToInStock(_orderStatus);
+
+            if (IsInStockPossible()) return true;
+            if (IsInShippingPossible()) return true;
+            return true;
         }
-        private bool FromNewToInStock(OrderStatus orderStatus)
+        private bool IsInStockPossible()
         {
-            return orderStatus == OrderStatus.New;
+            if (_orderStatus == OrderStatus.New && _orderStatusChangedTo == OrderStatus.InStock) return true;
+            return false;
         }
-        private bool FromInStockToInShipping(OrderStatus orderStatus)
+        private bool IsInShippingPossible()
         {
-            return orderStatus == OrderStatus.InStock;
+            if (_orderStatus == OrderStatus.InStock && _orderStatusChangedTo == OrderStatus.InShipment) return true;
+            return false;
         }
         public string Explain()
         {
