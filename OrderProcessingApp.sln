@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessingApp", "src\OrderProcessingApp.csproj", "{3937FB3A-2D22-32D3-11D1-DC4B64F97872}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessingApp.Tests", "tests\OrderProcessingApp.Tests\OrderProcessingApp.Tests.csproj", "{474C62F6-0537-4147-8E92-70C7D7E11AD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3937FB3A-2D22-32D3-11D1-DC4B64F97872}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3937FB3A-2D22-32D3-11D1-DC4B64F97872}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3937FB3A-2D22-32D3-11D1-DC4B64F97872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{474C62F6-0537-4147-8E92-70C7D7E11AD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{474C62F6-0537-4147-8E92-70C7D7E11AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{474C62F6-0537-4147-8E92-70C7D7E11AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{474C62F6-0537-4147-8E92-70C7D7E11AD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
