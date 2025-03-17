@@ -26,7 +26,7 @@ W projekcie zastosowano podejście obiektowe, w tym:
 
 * Dodatkowo typy takie jak Typ Klienta, Sposób płatności oraz Status Zamówienia zostały przedstawione jako enum.
 
-# Architektura aplikacji
+## Architektura aplikacji
 * UserInputService: Klasa odpowiedzialna za interakcję z użytkownikiem. Przechowuje wszystkie wiadomości systemowe w formie prywatnych pól, co umożliwia łatwą modyfikację i potencjalną lokalizację aplikacji w przyszłości.
 
 * OrderService: Klasa pośrednicząca między UserInputService a OrderRepository. Zawiera logiki biznesowe oraz zapisu i odczytu danych.
