@@ -171,6 +171,7 @@ namespace OrderProcessingApp.Services
             if (!string.IsNullOrWhiteSpace(input))
             {
                 Console.WriteLine(invalidStringInputPrompt);
+                return;
             }
             if (IsListCommand(input!))
             {
