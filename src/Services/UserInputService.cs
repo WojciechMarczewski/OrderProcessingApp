@@ -168,7 +168,7 @@ namespace OrderProcessingApp.Services
         {
             Console.WriteLine(prompt);
             string? input = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(input))
             {
                 Console.WriteLine(invalidStringInputPrompt);
                 return;
