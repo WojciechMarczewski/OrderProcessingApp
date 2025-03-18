@@ -170,50 +170,45 @@ namespace OrderProcessingApp.Services
             string? input = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(input))
             {
-                if (IsListCommand(input))
+                Console.WriteLine(invalidStringInputPrompt);
+            }
+            if (IsListCommand(input!))
+            {
+                if (ReferenceEquals(prompt, orderToWarehousePrompt))
                 {
-                    if (ReferenceEquals(prompt, orderToWarehousePrompt))
-                    {
-                        var ordersList = await _orderService.GetAllNewOrders();
-                        if (ordersList.Count > 0)
-                        {
-                            PrintOrders(ordersList);
-                            Console.WriteLine(prompt);
-                            input = Console.ReadLine();
-                        }
-                        else
-                        {
-                            Console.WriteLine(noOrdersAvailablePrompt);
-                        }
-                    }
-                    if (ReferenceEquals(prompt, orderToShippingPrompt))
-                    {
-                        var ordersList = await _orderService.GetAllOrdersInStock();
-                        if (ordersList.Count > 0)
-                        {
-                            PrintOrders(ordersList);
-                            Console.WriteLine(prompt);
-                            input = Console.ReadLine();
-                        }
-                        else
-                        {
-                            Console.WriteLine(noOrdersAvailablePrompt);
-                        }
-                    }
+                    await HandleOrderList(_orderService.GetAllNewOrders);
+                    Console.WriteLine(prompt);
+                    input = Console.ReadLine();
+                }
+                if (ReferenceEquals(prompt, orderToShippingPrompt))
+                {
+                    await HandleOrderList(_orderService.GetAllOrdersInStock);
+                    Console.WriteLine(prompt);
+                    input = Console.ReadLine();
+                }
 
-                }
-                if (int.TryParse(input, out int orderId))
-                {
-                    await action(orderId);
-                }
-                else
-                {
-                    Console.WriteLine(invalidIntInputPrompt);
-                }
+            }
+            if (int.TryParse(input, out int orderId))
+            {
+                await action(orderId);
             }
             else
             {
-                Console.WriteLine(invalidStringInputPrompt);
+                Console.WriteLine(invalidIntInputPrompt);
+            }
+        }
+
+
+        private async Task HandleOrderList(Func<Task<List<Order>>> getOrders)
+        {
+            var ordersList = await getOrders();
+            if (ordersList.Count > 0)
+            {
+                PrintOrders(ordersList);
+            }
+            else
+            {
+                Console.WriteLine(noOrdersAvailablePrompt);
             }
         }
         private bool IsListCommand(string input)
