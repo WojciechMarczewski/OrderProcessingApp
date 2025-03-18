@@ -10,8 +10,8 @@ namespace OrderProcessingApp.Repositories
         Task<Order?> GetOrderByIDAsync(int orderId);
         Task<IEnumerable<Order>> GetAllOrdersAsync();
         Task<int> GetLastIdAsync();
-        Task<IEnumerable<Order>> GetAllNewOrders();
-        Task<IEnumerable<Order>> GetAllInStockOrders();
+        Task<IEnumerable<Order>> GetAllNewOrdersAsync();
+        Task<IEnumerable<Order>> GetAllInStockOrdersAsync();
 
 
     }

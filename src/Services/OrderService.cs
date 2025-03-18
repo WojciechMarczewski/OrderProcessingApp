@@ -85,14 +85,17 @@ namespace OrderProcessingApp.Services
         {
             return (List<Order>)await _orderRepository.GetAllOrdersAsync();
         }
-        public async Task<List<Order>> GetAllNewOrders()
+        public async Task<List<Order>> GetAllNewOrdersAsync()
         {
-            return (List<Order>)await _orderRepository.GetAllNewOrders();
+            return (List<Order>)await _orderRepository.GetAllNewOrdersAsync();
         }
         public async Task<List<Order>> GetAllOrdersInStock()
         {
-            return (List<Order>)await _orderRepository.GetAllInStockOrders();
+            return (List<Order>)await _orderRepository.GetAllInStockOrdersAsync();
         }
-
+        public async Task<Order?> GetSpecificOrderByIdAsync(int orderId)
+        {
+            return await _orderRepository.GetOrderByIDAsync(orderId);
+        }
     }
 }

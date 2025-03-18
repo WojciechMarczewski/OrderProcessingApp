@@ -12,7 +12,8 @@ namespace OrderProcessingApp.Services
         private readonly string menuOptionTwo = "2. Przekaż zamówienie do magazynu";
         private readonly string menuOptionThree = "3. Przekaż zamówienie do wysyłki";
         private readonly string menuOptionFour = "4. Przegląd zamówień";
-        private readonly string menuOptionExit = "5. Wyjście";
+        private readonly string menuOptionFive = "5. Przegląd historii statusów zamówienia";
+        private readonly string menuOptionExit = "6. Wyjście";
 
         private readonly string productNamePrompt = "Podaj nazwę produktu";
         private readonly string amountPrompt = "Podaj kwotę zamówienia";
@@ -44,6 +45,8 @@ namespace OrderProcessingApp.Services
 
         private readonly string unknownCommandPrompt = "Nieznana komenda. Spróbuj jeszcze raz.";
 
+        private readonly string orderStatusHistoryPrompt = "Proszę wybrać id zamówienia w celu przejrzenia jego historii.";
+
         private readonly OrderService _orderService;
 
         public UserInputService(OrderService orderService)
@@ -62,6 +65,7 @@ namespace OrderProcessingApp.Services
                 menuOptionTwo + Environment.NewLine +
                 menuOptionThree + Environment.NewLine +
                 menuOptionFour + Environment.NewLine +
+                menuOptionFive + Environment.NewLine +
                 menuOptionExit + Environment.NewLine);
         }
         public void PrintUnknownCommand()
@@ -95,7 +99,7 @@ namespace OrderProcessingApp.Services
                 );
 
         }
-        public async Task CreateNewOrderAsync()
+        public async Task CreateNewOrderCommand()
         {
             var orderData = GetOrderDataFromUser();
             try
@@ -177,7 +181,7 @@ namespace OrderProcessingApp.Services
             {
                 if (ReferenceEquals(prompt, orderToWarehousePrompt))
                 {
-                    await HandleOrderList(_orderService.GetAllNewOrders);
+                    await HandleOrderList(_orderService.GetAllNewOrdersAsync);
                     Console.WriteLine(prompt);
                     input = Console.ReadLine();
                 }
@@ -230,12 +234,12 @@ namespace OrderProcessingApp.Services
 
             }
         }
-        public async Task PrintAllOrders()
+        public async Task PrintAllOrdersCommand()
         {
             var orders = await _orderService.GetAllOrdersAsync();
             PrintOrders(orders);
         }
-        public async Task MoveOrderToWarehouse()
+        public async Task MoveOrderToWarehouseCommand()
         {
             try
             {
@@ -253,7 +257,7 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine("Błąd: " + ex.Message);
             }
         }
-        public async Task MoveOrderToShipping()
+        public async Task MoveOrderToShippingCommand()
         {
             try
             {
@@ -275,8 +279,37 @@ namespace OrderProcessingApp.Services
         {
             return GetIntInput("");
         }
+        public async Task PrintOrderStatusHistoryCommand()
+        {
+            try
+            {
+                await HandleOrderSelection(orderStatusHistoryPrompt, async orderId =>
+                {
+                    var order = await _orderService.GetSpecificOrderByIdAsync(orderId);
+                    if (order is not null)
+                    {
+                        PrintOrderStatusHistory(order);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Nie można znaleźć tego zamówienia.");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Błąd: " + ex.Message);
+            }
+        }
 
 
+        private void PrintOrderStatusHistory(Order order)
+        {
+            foreach (var status in order.OrderStatusHistory)
+            {
+                Console.WriteLine(status.TimeStamp + " : " + status.Status.ToPLString());
+            }
+        }
     }
 }
 

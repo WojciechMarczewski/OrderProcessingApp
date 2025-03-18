@@ -32,18 +32,21 @@ namespace OrderProcessingApp
                     switch (command)
                     {
                         case 1:
-                            await userInputService.CreateNewOrderAsync();
+                            await userInputService.CreateNewOrderCommand();
                             break;
                         case 2:
-                            await userInputService.MoveOrderToWarehouse();
+                            await userInputService.MoveOrderToWarehouseCommand();
                             break;
                         case 3:
-                            await userInputService.MoveOrderToShipping();
+                            await userInputService.MoveOrderToShippingCommand();
                             break;
                         case 4:
-                            await userInputService.PrintAllOrders();
+                            await userInputService.PrintAllOrdersCommand();
                             break;
                         case 5:
+                            await userInputService.PrintOrderStatusHistoryCommand();
+                            break;
+                        case 6:
                             Environment.Exit(0);
                             break;
                         default:
