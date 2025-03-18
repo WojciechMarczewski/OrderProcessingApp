@@ -4,7 +4,7 @@ using OrderProcessingApp.Models;
 
 namespace OrderProcessingApp.Services
 {
-    public class UserInputService
+    public class UserInputService : IUserInputService
     {
         private readonly string welcomeMessage = "Witaj w aplikacji do zarządzania zamówieniami";
         private readonly string menuOptionsPrompt = "\nWybierz opcję:";
@@ -99,7 +99,7 @@ namespace OrderProcessingApp.Services
                 );
 
         }
-        public async Task CreateNewOrderCommand()
+        public async Task CreateNewOrderAsync()
         {
             var orderData = GetOrderDataFromUser();
             try
@@ -234,12 +234,12 @@ namespace OrderProcessingApp.Services
 
             }
         }
-        public async Task PrintAllOrdersCommand()
+        public async Task PrintAllOrdersAsync()
         {
             var orders = await _orderService.GetAllOrdersAsync();
             PrintOrders(orders);
         }
-        public async Task MoveOrderToWarehouseCommand()
+        public async Task MoveOrderToWarehouseAsync()
         {
             try
             {
@@ -257,7 +257,7 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine("Błąd: " + ex.Message);
             }
         }
-        public async Task MoveOrderToShippingCommand()
+        public async Task MoveOrderToShippingAsync()
         {
             try
             {
@@ -279,7 +279,7 @@ namespace OrderProcessingApp.Services
         {
             return GetIntInput("");
         }
-        public async Task PrintOrderStatusHistoryCommand()
+        public async Task PrintOrderStatusHistoryAsync()
         {
             try
             {

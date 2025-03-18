@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OrderProcessingApp.Commands;
 using OrderProcessingApp.Data;
+using OrderProcessingApp.Extensions;
 using OrderProcessingApp.Factories;
 using OrderProcessingApp.Repositories;
 using OrderProcessingApp.Services;
@@ -17,42 +19,35 @@ namespace OrderProcessingApp
                 AddScoped<IOrderRepository, OrderRepository>().
                 AddScoped<IOrderFactory, OrderFactory>().
                 AddScoped<OrderService>().
-                AddScoped<UserInputService>().
+                AddScoped<IUserInputService, UserInputService>().
+                AddCommandsHandler().
                 BuildServiceProvider();
 
             SeedDatabase(serviceProvider);
-            var userInputService = serviceProvider.GetService<UserInputService>();
+            var commands = serviceProvider.GetRequiredService<Dictionary<int, ICommand>>();
+            var userInputService = serviceProvider.GetService<IUserInputService>();
+            var exitId = 6;
+
+
             if (userInputService is not null)
             {
                 userInputService.PrintWelcomeMessage();
                 while (true)
                 {
                     userInputService.PrintMenu();
-                    var command = userInputService.UserInputCommand();
-                    switch (command)
+                    var commandId = userInputService.UserInputCommand();
+                    if (commandId.Equals(exitId)) Environment.Exit(0);
+                    try
                     {
-                        case 1:
-                            await userInputService.CreateNewOrderCommand();
-                            break;
-                        case 2:
-                            await userInputService.MoveOrderToWarehouseCommand();
-                            break;
-                        case 3:
-                            await userInputService.MoveOrderToShippingCommand();
-                            break;
-                        case 4:
-                            await userInputService.PrintAllOrdersCommand();
-                            break;
-                        case 5:
-                            await userInputService.PrintOrderStatusHistoryCommand();
-                            break;
-                        case 6:
-                            Environment.Exit(0);
-                            break;
-                        default:
-                            userInputService.PrintUnknownCommand();
-                            break;
-
+                        await commands[commandId].ExecuteAsync();
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        userInputService.PrintUnknownCommand();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Błąd: " + ex.Message);
                     }
                 }
             }
@@ -63,7 +58,7 @@ namespace OrderProcessingApp
 
 
         }
-        private static void SeedDatabase(ServiceProvider serviceProvider)
+        private static void SeedDatabase(IServiceProvider serviceProvider)
         {
             using (var scope = serviceProvider.CreateScope())
             {
@@ -77,5 +72,6 @@ namespace OrderProcessingApp
                 }
             }
         }
+
     }
 }
