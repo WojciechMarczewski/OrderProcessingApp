@@ -19,8 +19,8 @@ namespace OrderProcessingApp.BusinessRules
             _orderStatus = order.GetOrderStatus();
             _orderId = order.Id;
 
-            if (IsInStockPossible()) return true;
-            if (IsInShippingPossible()) return true;
+            if (IsInStockPossible()) return false;
+            if (IsInShippingPossible()) return false;
             return true;
         }
         private bool IsInStockPossible()
