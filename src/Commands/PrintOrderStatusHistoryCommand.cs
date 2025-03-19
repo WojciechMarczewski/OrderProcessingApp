@@ -20,7 +20,7 @@ namespace OrderProcessingApp.Commands
 
         public async Task ExecuteAsync()
         {
-            await _userInputService.PrintOrderStatusHistoryAsync();
+            await _userInputService.PrintOrderStatusHistoryAsync().ConfigureAwait(false);
         }
     }
 }

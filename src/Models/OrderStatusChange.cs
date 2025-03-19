@@ -5,7 +5,6 @@ namespace OrderProcessingApp.Models
     public class OrderStatusChange
     {
         public int Id { get; set; }
-        private int OrderId { get; set; }
         private OrderStatus _status;
         private DateTimeOffset _timeStamp;
 

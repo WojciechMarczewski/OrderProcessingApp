@@ -39,7 +39,7 @@ namespace OrderProcessingApp
                     if (commandId.Equals(exitId)) Environment.Exit(0);
                     try
                     {
-                        await commands[commandId].ExecuteAsync();
+                        await commands[commandId].ExecuteAsync().ConfigureAwait(false);
                     }
                     catch (KeyNotFoundException)
                     {
@@ -47,7 +47,7 @@ namespace OrderProcessingApp
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Błąd: " + ex.Message);
+                        Console.WriteLine($"Błąd: {ex.Message}");
                     }
                 }
             }

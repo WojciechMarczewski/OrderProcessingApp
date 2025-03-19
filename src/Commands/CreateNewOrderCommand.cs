@@ -20,7 +20,7 @@ namespace OrderProcessingApp.Commands
 
         public async Task ExecuteAsync()
         {
-            await _userInputService.CreateNewOrderAsync();
+            await _userInputService.CreateNewOrderAsync().ConfigureAwait(false);
         }
     }
 }

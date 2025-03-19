@@ -20,7 +20,7 @@ namespace OrderProcessingApp.Commands
 
         public async Task ExecuteAsync()
         {
-            await _userInputService.MoveOrderToWarehouseAsync();
+            await _userInputService.MoveOrderToWarehouseAsync().ConfigureAwait(false);
         }
     }
 }

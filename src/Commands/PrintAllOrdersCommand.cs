@@ -20,7 +20,7 @@ namespace OrderProcessingApp.Commands
 
         public async Task ExecuteAsync()
         {
-            await _userInputService.PrintAllOrdersAsync();
+            await _userInputService.PrintAllOrdersAsync().ConfigureAwait(false);
         }
     }
 }
