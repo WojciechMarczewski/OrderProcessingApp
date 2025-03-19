@@ -17,19 +17,19 @@ namespace OrderProcessingApp.Services
             _orderRepository = orderRepository;
             _orderFactory = orderFactory;
         }
-        public async Task CreateNewOrderAsync(OrderData orderData)
+        public async Task CreateNewOrderAsync(OrderData orderData, CancellationToken cancellationToken)
         {
             var order = _orderFactory.CreateNewOrder(orderData);
             var addressRequiredRule = new ShippingAddressRequiredRule();
             if (addressRequiredRule.IsViolated(order))
             {
                 order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.Error, DateTimeOffset.Now));
-                await _orderRepository.AddOrderAsync(order).ConfigureAwait(false);
+                await _orderRepository.AddOrderAsync(order, cancellationToken).ConfigureAwait(false);
                 throw new InvalidOperationException(addressRequiredRule.Explain());
             }
-            await _orderRepository.AddOrderAsync(order).ConfigureAwait(false);
+            await _orderRepository.AddOrderAsync(order, cancellationToken).ConfigureAwait(false);
         }
-        public async Task MoveOrderToWarehouseAsync(int orderId)
+        public async Task MoveOrderToWarehouseAsync(int orderId, CancellationToken cancellationToken)
         {
             await ChangeOrderStatusAsync(orderId, (order) =>
             {
@@ -48,9 +48,9 @@ namespace OrderProcessingApp.Services
                 {
                     order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InStock, DateTimeOffset.Now));
                 }
-            }).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
         }
-        public async Task MoveOrderToShippingAsync(int orderId)
+        public async Task MoveOrderToShippingAsync(int orderId, CancellationToken cancellationToken)
         {
             await ChangeOrderStatusAsync(orderId, (order) =>
             {
@@ -64,12 +64,12 @@ namespace OrderProcessingApp.Services
 
                     order.OrderStatusHistory.Add(new OrderStatusChange(OrderStatus.InShipment, DateTimeOffset.Now));
                 }
-            }).ConfigureAwait(false);
-            await Task.Delay(2000).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(2000, cancellationToken).ConfigureAwait(false);
         }
-        private async Task ChangeOrderStatusAsync(int orderId, Action<Order> action)
+        private async Task ChangeOrderStatusAsync(int orderId, Action<Order> action, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderByIDAsync(orderId).ConfigureAwait(false);
+            var order = await _orderRepository.GetOrderByIDAsync(orderId, cancellationToken).ConfigureAwait(false);
             if (order is not null)
             {
                 action(order);
@@ -78,24 +78,24 @@ namespace OrderProcessingApp.Services
             {
                 throw new KeyNotFoundException($"Nie można znaleźć zamówienia z numerem indeksu {orderId}");
             }
-            await _orderRepository.UpdateOrderAsync(order).ConfigureAwait(false);
+            await _orderRepository.UpdateOrderAsync(order, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<List<Order>> GetAllOrdersAsync()
+        public async Task<List<Order>> GetAllOrdersAsync(CancellationToken cancellationToken)
         {
-            return (List<Order>)await _orderRepository.GetAllOrdersAsync().ConfigureAwait(false);
+            return (List<Order>)await _orderRepository.GetAllOrdersAsync(cancellationToken).ConfigureAwait(false);
         }
-        public async Task<List<Order>> GetAllNewOrdersAsync()
+        public async Task<List<Order>> GetAllNewOrdersAsync(CancellationToken cancellationToken)
         {
-            return (List<Order>)await _orderRepository.GetAllNewOrdersAsync().ConfigureAwait(false);
+            return (List<Order>)await _orderRepository.GetAllNewOrdersAsync(cancellationToken).ConfigureAwait(false);
         }
-        public async Task<List<Order>> GetAllOrdersInStockAsync()
+        public async Task<List<Order>> GetAllOrdersInStockAsync(CancellationToken cancellationToken)
         {
-            return (List<Order>)await _orderRepository.GetAllInStockOrdersAsync().ConfigureAwait(false);
+            return (List<Order>)await _orderRepository.GetAllInStockOrdersAsync(cancellationToken).ConfigureAwait(false);
         }
-        public async Task<Order?> GetSpecificOrderByIdAsync(int orderId)
+        public Task<Order?> GetSpecificOrderByIdAsync(int orderId, CancellationToken cancellationToken)
         {
-            return await _orderRepository.GetOrderByIDAsync(orderId).ConfigureAwait(false);
+            return _orderRepository.GetOrderByIDAsync(orderId, cancellationToken);
         }
     }
 }

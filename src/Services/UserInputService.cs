@@ -99,12 +99,12 @@ namespace OrderProcessingApp.Services
                 );
 
         }
-        public async Task CreateNewOrderAsync()
+        public async Task CreateNewOrderAsync(CancellationToken cancellationToken)
         {
             var orderData = GetOrderDataFromUser();
             try
             {
-                await _orderService.CreateNewOrderAsync(orderData).ConfigureAwait(false);
+                await _orderService.CreateNewOrderAsync(orderData, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -128,7 +128,7 @@ namespace OrderProcessingApp.Services
                 }
             }
         }
-        private string? GetStringInputNoNullCheck(string prompt)
+        private static string? GetStringInputNoNullCheck(string prompt)
         {
 
             Console.WriteLine(prompt);
@@ -168,7 +168,7 @@ namespace OrderProcessingApp.Services
                 }
             }
         }
-        private async Task HandleOrderSelectionAsync(string prompt, Func<int, Task> action)
+        private async Task HandleOrderSelectionAsync(string prompt, Func<int, Task> action, CancellationToken cancellationToken)
         {
             Console.WriteLine(prompt);
             string? input = Console.ReadLine();
@@ -181,13 +181,13 @@ namespace OrderProcessingApp.Services
             {
                 if (ReferenceEquals(prompt, orderToWarehousePrompt))
                 {
-                    await HandleOrderListAsync(_orderService.GetAllNewOrdersAsync).ConfigureAwait(false);
+                    await HandleOrderListAsync(_orderService.GetAllNewOrdersAsync, cancellationToken).ConfigureAwait(false);
                     Console.WriteLine(prompt);
                     input = Console.ReadLine();
                 }
                 if (ReferenceEquals(prompt, orderToShippingPrompt))
                 {
-                    await HandleOrderListAsync(_orderService.GetAllOrdersInStockAsync).ConfigureAwait(false);
+                    await HandleOrderListAsync(_orderService.GetAllOrdersInStockAsync, cancellationToken).ConfigureAwait(false);
                     Console.WriteLine(prompt);
                     input = Console.ReadLine();
                 }
@@ -204,9 +204,9 @@ namespace OrderProcessingApp.Services
         }
 
 
-        private async Task HandleOrderListAsync(Func<Task<List<Order>>> getOrders)
+        private async Task HandleOrderListAsync(Func<CancellationToken, Task<List<Order>>> getOrders, CancellationToken cancellationToken)
         {
-            var ordersList = await getOrders().ConfigureAwait(false);
+            var ordersList = await getOrders(cancellationToken).ConfigureAwait(false);
             if (ordersList.Count > 0)
             {
                 PrintOrders(ordersList);
@@ -216,11 +216,11 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine(noOrdersAvailablePrompt);
             }
         }
-        private bool IsListCommand(string input)
+        private static bool IsListCommand(string input)
         {
             return string.Equals(input, "list", StringComparison.OrdinalIgnoreCase);
         }
-        private void PrintOrders(List<Order> orderList)
+        private static void PrintOrders(List<Order> orderList)
         {
             foreach (var order in orderList)
             {
@@ -234,12 +234,12 @@ namespace OrderProcessingApp.Services
 
             }
         }
-        public async Task PrintAllOrdersAsync()
+        public async Task PrintAllOrdersAsync(CancellationToken cancellationToken)
         {
-            var orders = await _orderService.GetAllOrdersAsync().ConfigureAwait(false);
+            var orders = await _orderService.GetAllOrdersAsync(cancellationToken).ConfigureAwait(false);
             PrintOrders(orders);
         }
-        public async Task MoveOrderToWarehouseAsync()
+        public async Task MoveOrderToWarehouseAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -247,9 +247,9 @@ namespace OrderProcessingApp.Services
                 await HandleOrderSelectionAsync(orderToWarehousePrompt, async orderId =>
                 {
                     Console.WriteLine(orderWarehouseProcessingPrompt);
-                    await _orderService.MoveOrderToWarehouseAsync(orderId).ConfigureAwait(false);
+                    await _orderService.MoveOrderToWarehouseAsync(orderId, cancellationToken).ConfigureAwait(false);
                     Console.WriteLine(orderInWarehousePrompt);
-                }).ConfigureAwait(false);
+                }, cancellationToken).ConfigureAwait(false);
 
             }
             catch (Exception ex)
@@ -257,7 +257,7 @@ namespace OrderProcessingApp.Services
                 Console.WriteLine($"Błąd: {ex.Message}");
             }
         }
-        public async Task MoveOrderToShippingAsync()
+        public async Task MoveOrderToShippingAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -265,9 +265,9 @@ namespace OrderProcessingApp.Services
                 await HandleOrderSelectionAsync(orderToShippingPrompt, async orderId =>
                 {
                     Console.WriteLine(orderShipmentProcessingPrompt);
-                    await _orderService.MoveOrderToShippingAsync(orderId).ConfigureAwait(false);
+                    await _orderService.MoveOrderToShippingAsync(orderId, cancellationToken).ConfigureAwait(false);
                     Console.WriteLine(orderInShippingPrompt);
-                }).ConfigureAwait(false);
+                }, cancellationToken).ConfigureAwait(false);
 
             }
             catch (Exception ex)
@@ -279,13 +279,13 @@ namespace OrderProcessingApp.Services
         {
             return GetIntInput("");
         }
-        public async Task PrintOrderStatusHistoryAsync()
+        public async Task PrintOrderStatusHistoryAsync(CancellationToken cancellationToken)
         {
             try
             {
                 await HandleOrderSelectionAsync(orderStatusHistoryPrompt, async orderId =>
                 {
-                    var order = await _orderService.GetSpecificOrderByIdAsync(orderId).ConfigureAwait(false);
+                    var order = await _orderService.GetSpecificOrderByIdAsync(orderId, cancellationToken).ConfigureAwait(false);
                     if (order is not null)
                     {
                         PrintOrderStatusHistory(order);
@@ -294,7 +294,7 @@ namespace OrderProcessingApp.Services
                     {
                         Console.WriteLine("Nie można znaleźć tego zamówienia.");
                     }
-                }).ConfigureAwait(false);
+                }, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -303,7 +303,7 @@ namespace OrderProcessingApp.Services
         }
 
 
-        private void PrintOrderStatusHistory(Order order)
+        private static void PrintOrderStatusHistory(Order order)
         {
             foreach (var status in order.OrderStatusHistory)
             {

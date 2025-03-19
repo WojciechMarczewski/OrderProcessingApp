@@ -7,7 +7,7 @@ namespace OrderProcessingApp.Tests
     public class OrderBusinessRulesTests
     {
         [Fact]
-        public void CashOnDeliveryThresholdRule_ReturnsTrue_WhenTresholdExceeded_AndCashOnDelivery()
+        public void CashOnDeliveryThresholdRule_ReturnsTrue_WhenThresholdExceeded_AndCashOnDelivery()
         {
             //Arrange
             var order = new TestOrderFactory().CreateOrderWithAmountAndPaymentMethod((decimal)2500.01, PaymentMethod.CashOnDelivery);
@@ -100,7 +100,7 @@ namespace OrderProcessingApp.Tests
         [InlineData("x", "x", " ", "x")]
         [InlineData("x", "", "x", "x")]
         [InlineData("", "x", "x", "x")]
-        public void ShippingAddressRequiredRule_IsViolated_WhenAdrressIsMissingField(string addressStreet, string addressCity, string addressZipCode, string addressCountry)
+        public void ShippingAddressRequiredRule_IsViolated_WhenAddressIsMissingField(string addressStreet, string addressCity, string addressZipCode, string addressCountry)
         {
             //Arrange
             var order = new TestOrderFactory().CreateOrderWithAddress(addressStreet, addressCity, addressZipCode, addressCountry);

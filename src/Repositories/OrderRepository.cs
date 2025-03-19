@@ -14,51 +14,52 @@ namespace OrderProcessingApp.Repositories
             _appDbContext = appDbContext;
         }
 
-        public async Task AddOrderAsync(Order order)
+        public async Task AddOrderAsync(Order order, CancellationToken cancellationToken)
         {
-            await _appDbContext.Orders.AddAsync(order).ConfigureAwait(false);
-            await _appDbContext.SaveChangesAsync().ConfigureAwait(false);
+            await _appDbContext.Orders.AddAsync(order, cancellationToken).ConfigureAwait(false);
+            await _appDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        public Task<List<Order>> GetAllOrdersAsync(CancellationToken cancellationToken)
         {
-            return await _appDbContext.Orders.Include(o => o.OrderStatusHistory).ToListAsync().ConfigureAwait(false);
+            return _appDbContext.Orders.Include(o => o.OrderStatusHistory).ToListAsync(cancellationToken);
         }
 
-        public async Task<Order?> GetOrderByIDAsync(int orderId)
+        public Task<Order?> GetOrderByIDAsync(int orderId, CancellationToken cancellationToken)
         {
-            return await _appDbContext.Orders.Include(o => o.OrderStatusHistory).FirstOrDefaultAsync(o => o.Id == orderId).ConfigureAwait(false);
+            return _appDbContext.Orders.Include(o => o.OrderStatusHistory).FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
         }
 
-        public async Task RemoveOrderAsync(Order order)
+        public async Task RemoveOrderAsync(Order order, CancellationToken cancellationToken)
         {
             _appDbContext.Orders.Remove(order);
-            await _appDbContext.SaveChangesAsync().ConfigureAwait(false);
+            await _appDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task UpdateOrderAsync(Order order)
+        public async Task UpdateOrderAsync(Order order, CancellationToken cancellationToken)
         {
             _appDbContext.Orders.Update(order);
-            await _appDbContext.SaveChangesAsync().ConfigureAwait(false);
+            await _appDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
-        public async Task<int> GetLastIdAsync()
+        public async Task<int> GetLastIdAsync(CancellationToken cancellationToken)
         {
-            var lastOrder = await _appDbContext.Orders.MaxAsync(order => (int?)order.Id).ConfigureAwait(false) ?? 0;
+            var lastOrder = await _appDbContext.Orders.MaxAsync(order => (int?)order.Id, cancellationToken).ConfigureAwait(false) ?? 0;
             return lastOrder;
         }
-        public async Task<IEnumerable<Order>> GetAllNewOrdersAsync()
+        public Task<List<Order>> GetAllNewOrdersAsync(CancellationToken cancellationToken)
         {
-            return await _appDbContext.Orders.
+            return _appDbContext.Orders.
                 Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.New)).
                 Include(o => o.OrderStatusHistory).
-                ToListAsync().ConfigureAwait(false);
+                ToListAsync(cancellationToken);
         }
-        public async Task<IEnumerable<Order>> GetAllInStockOrdersAsync()
+        public Task<List<Order>> GetAllInStockOrdersAsync(CancellationToken cancellationToken)
         {
-            return await _appDbContext.Orders.
+
+            return _appDbContext.Orders.
                 Where(order => order.OrderStatusHistory.Last().Status.Equals(OrderStatus.InStock)).
                 Include(o => o.OrderStatusHistory).
-                ToListAsync().ConfigureAwait(false);
+                ToListAsync(cancellationToken);
         }
     }
 }

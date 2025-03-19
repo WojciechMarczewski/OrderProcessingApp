@@ -5,8 +5,8 @@ namespace OrderProcessingApp.Models
     public class OrderStatusChange
     {
         public int Id { get; set; }
-        private OrderStatus _status;
-        private DateTimeOffset _timeStamp;
+        private readonly OrderStatus _status;
+        private readonly DateTimeOffset _timeStamp;
 
         private OrderStatusChange() { }
         public OrderStatusChange(OrderStatus status, DateTimeOffset timeStamp)

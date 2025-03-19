@@ -18,9 +18,10 @@ namespace OrderProcessingApp.Commands
             throw new NotImplementedException();
         }
 
-        public async Task ExecuteAsync()
+        public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            await _userInputService.PrintOrderStatusHistoryAsync().ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            await _userInputService.PrintOrderStatusHistoryAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

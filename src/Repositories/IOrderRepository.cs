@@ -4,14 +4,14 @@ namespace OrderProcessingApp.Repositories
 {
     public interface IOrderRepository
     {
-        Task AddOrderAsync(Order order);
-        Task RemoveOrderAsync(Order order);
-        Task UpdateOrderAsync(Order order);
-        Task<Order?> GetOrderByIDAsync(int orderId);
-        Task<IEnumerable<Order>> GetAllOrdersAsync();
-        Task<int> GetLastIdAsync();
-        Task<IEnumerable<Order>> GetAllNewOrdersAsync();
-        Task<IEnumerable<Order>> GetAllInStockOrdersAsync();
+        Task AddOrderAsync(Order order, CancellationToken cancellationToken);
+        Task RemoveOrderAsync(Order order, CancellationToken cancellationToken);
+        Task UpdateOrderAsync(Order order, CancellationToken cancellationToken);
+        Task<Order?> GetOrderByIDAsync(int orderId, CancellationToken cancellationToken);
+        Task<List<Order>> GetAllOrdersAsync(CancellationToken cancellationToken);
+        Task<int> GetLastIdAsync(CancellationToken cancellationToken);
+        Task<List<Order>> GetAllNewOrdersAsync(CancellationToken cancellationToken);
+        Task<List<Order>> GetAllInStockOrdersAsync(CancellationToken cancellationToken);
 
 
     }

@@ -11,7 +11,7 @@ namespace OrderProcessingApp
 {
     internal class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             var serviceProvider = new ServiceCollection().
                 AddDbContext<AppDbContext>(options =>
@@ -27,7 +27,7 @@ namespace OrderProcessingApp
             var commands = serviceProvider.GetRequiredService<Dictionary<int, ICommand>>();
             var userInputService = serviceProvider.GetService<IUserInputService>();
             var exitId = 6;
-
+            var cancellationTokenSource = new CancellationTokenSource();
 
             if (userInputService is not null)
             {
@@ -36,14 +36,23 @@ namespace OrderProcessingApp
                 {
                     userInputService.PrintMenu();
                     var commandId = userInputService.UserInputCommand();
-                    if (commandId.Equals(exitId)) Environment.Exit(0);
+                    if (commandId.Equals(exitId))
+                    {
+                        cancellationTokenSource.Cancel();
+                        Environment.Exit(0);
+                    }
                     try
                     {
-                        await commands[commandId].ExecuteAsync().ConfigureAwait(false);
+
+                        await commands[commandId].ExecuteAsync(cancellationTokenSource.Token).ConfigureAwait(false);
                     }
                     catch (KeyNotFoundException)
                     {
                         userInputService.PrintUnknownCommand();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Console.WriteLine("Operacja została anulowana");
                     }
                     catch (Exception ex)
                     {
